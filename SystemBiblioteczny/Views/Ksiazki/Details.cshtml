@@ -1,0 +1,34 @@
+﻿@model SystemBiblioteczny.Models.Ksiazka
+
+<h1>Szczegóły książki</h1>
+
+<div class="card">
+    <div class="card-body">
+
+        <h3>@Model.Tytul</h3>
+
+        <p><strong>ISBN:</strong> @Model.ISBN</p>
+
+        <p><strong>Rok wydania:</strong> @Model.RokWydania</p>
+
+        <p><strong>Wydawnictwo:</strong> @Model.Wydawnictwo</p>
+
+        <p><strong>Kategoria:</strong> @Model.Kategoria?.Nazwa</p>
+
+        
+
+    </div>
+</div>
+
+<br />
+
+<a asp-action="Edit"
+   asp-route-id="@Model.KsiazkaId"
+   class="btn btn-warning">
+    Edytuj
+</a>
+
+<a asp-action="Index"
+   class="btn btn-secondary">
+    Powrót
+</a>

@@ -1,0 +1,26 @@
+﻿@model SystemBiblioteczny.Models.Autor
+
+<h1>Dodaj autora</h1>
+
+<form asp-action="Create">
+
+    <div class="mb-3">
+        <label asp-for="Imie"></label>
+        <input asp-for="Imie" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Nazwisko"></label>
+        <input asp-for="Nazwisko" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Bio"></label>
+        <textarea asp-for="Bio" class="form-control"></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Zapisz
+    </button>
+
+</form>

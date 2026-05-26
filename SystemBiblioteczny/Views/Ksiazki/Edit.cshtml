@@ -1,0 +1,46 @@
+﻿@model SystemBiblioteczny.Models.Ksiazka
+
+<h1>Edytuj książkę</h1>
+
+<form asp-action="Edit">
+
+    <input type="hidden" asp-for="KsiazkaId" />
+
+    <div class="mb-3">
+        <label asp-for="Tytul"></label>
+        <input asp-for="Tytul" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ISBN"></label>
+        <input asp-for="ISBN" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="RokWydania"></label>
+        <input asp-for="RokWydania" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Wydawnictwo"></label>
+        <input asp-for="Wydawnictwo" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Kategoria</label>
+
+        <select asp-for="KategoriaId"
+                asp-items="ViewBag.Kategorie"
+                class="form-select">
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Zapisz
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Powrót
+    </a>
+
+</form>
