@@ -15,6 +15,14 @@
 
         <p><strong>Kategoria:</strong> @Model.Kategoria?.Nazwa</p>
 
+        <p>
+            <strong>Autor:</strong>
+
+            @string.Join(", ",
+                Model.KsiazkaAutorzy.Select(a =>
+                    a.Autor.Imie + " " + a.Autor.Nazwisko))
+        </p>
+
         
 
     </div>

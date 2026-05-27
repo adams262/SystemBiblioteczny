@@ -1,10 +1,8 @@
-﻿@model SystemBiblioteczny.Models.Ksiazka
+﻿@model SystemBiblioteczny.Models.ViewModels.KsiazkaCreateViewModel
 
 <h1>Edytuj książkę</h1>
 
 <form asp-action="Edit">
-
-    <input type="hidden" asp-for="KsiazkaId" />
 
     <div class="mb-3">
         <label asp-for="Tytul"></label>
@@ -32,14 +30,37 @@
         <select asp-for="KategoriaId"
                 asp-items="ViewBag.Kategorie"
                 class="form-select">
+
+            <option value="">
+                -- wybierz kategorię --
+            </option>
+
         </select>
     </div>
 
-    <button type="submit" class="btn btn-success">
+    <div class="mb-3">
+
+        <label>Autor</label>
+
+        <select asp-for="AutorId"
+                asp-items="Model.Autorzy"
+                class="form-select">
+
+            <option value="">
+                -- wybierz autora --
+            </option>
+
+        </select>
+
+    </div>
+
+    <button type="submit"
+            class="btn btn-success">
         Zapisz
     </button>
 
-    <a asp-action="Index" class="btn btn-secondary">
+    <a asp-action="Index"
+           class="btn btn-secondary">
         Powrót
     </a>
 

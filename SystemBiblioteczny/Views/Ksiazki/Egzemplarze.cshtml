@@ -1,0 +1,40 @@
+﻿@model SystemBiblioteczny.Models.Ksiazka
+
+<h1>Egzemplarze książki</h1>
+
+<h3>@Model.Tytul</h3>
+
+<table class="table table-striped">
+
+    <thead>
+        <tr>
+            <th>ID egzemplarza</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var egz in Model.Egzemplarze)
+        {
+            <tr>
+
+                <td>
+                    @egz.EgzemplarzId
+                </td>
+
+                <td>
+                    @egz.Status
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+
+</table>
+
+<a asp-action="Index"
+       class="btn btn-secondary">
+    Powrót
+</a>

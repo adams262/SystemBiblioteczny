@@ -84,6 +84,8 @@ namespace SystemBiblioteczny.Controllers
 
             var ksiazka = await _context.Ksiazki
                 .Include(k => k.Kategoria)
+                .Include(k => k.KsiazkaAutorzy)
+                    .ThenInclude(ka => ka.Autor)
                 .FirstOrDefaultAsync(m => m.KsiazkaId == id);
 
             if (ksiazka == null)
@@ -101,7 +103,7 @@ namespace SystemBiblioteczny.Controllers
                     _context.Autorzy.ToList(),
                     "AutorId",
                     "Nazwisko"
-                )
+)
             };
 
             ViewBag.Kategorie = new SelectList(
@@ -126,22 +128,31 @@ namespace SystemBiblioteczny.Controllers
                     ISBN = vm.ISBN,
                     RokWydania = vm.RokWydania,
                     Wydawnictwo = vm.Wydawnictwo,
-                    KategoriaId = vm.KategoriaId
+                    KategoriaId = vm.KategoriaId,
+                    LiczbaEgzemplarzy = vm.LiczbaEgzemplarzy
                 };
 
                 _context.Ksiazki.Add(ksiazka);
 
                 await _context.SaveChangesAsync();
 
-                // RELACJA M:N
-                foreach (var autorId in vm.WybraniAutorzy)
+                for (int i = 0; i < ksiazka.LiczbaEgzemplarzy; i++)
                 {
-                    _context.KsiazkaAutorzy.Add(new KsiazkaAutor
+                    _context.Egzemplarze.Add(new Egzemplarz
                     {
                         KsiazkaId = ksiazka.KsiazkaId,
-                        AutorId = autorId
+                        Status = StatusEgzemplarza.Dostepny
                     });
                 }
+
+                await _context.SaveChangesAsync();
+
+                // RELACJA M:N
+                _context.KsiazkaAutorzy.Add(new KsiazkaAutor
+                {
+                    KsiazkaId = ksiazka.KsiazkaId,
+                    AutorId = vm.AutorId
+                });
 
                 await _context.SaveChangesAsync();
 
@@ -169,35 +180,94 @@ namespace SystemBiblioteczny.Controllers
             if (id == null)
                 return NotFound();
 
-            var ksiazka = await _context.Ksiazki.FindAsync(id);
+            var ksiazka = await _context.Ksiazki
+                .Include(k => k.KsiazkaAutorzy)
+                .FirstOrDefaultAsync(k => k.KsiazkaId == id);
 
             if (ksiazka == null)
                 return NotFound();
 
-            ViewBag.Kategorie = new SelectList(_context.Kategorie, "KategoriaId", "Nazwa", ksiazka.KategoriaId);
+            var autorId = ksiazka.KsiazkaAutorzy
+                .FirstOrDefault()?.AutorId;
 
-            return View(ksiazka);
+            var vm = new KsiazkaCreateViewModel
+            {
+                Tytul = ksiazka.Tytul,
+                ISBN = ksiazka.ISBN,
+                RokWydania = ksiazka.RokWydania,
+                Wydawnictwo = ksiazka.Wydawnictwo,
+                KategoriaId = ksiazka.KategoriaId,
+                AutorId = autorId ?? 0,
+
+                Autorzy = new MultiSelectList(
+                    _context.Autorzy.ToList(),
+                    "AutorId",
+                    "Nazwisko"
+                )
+            };
+
+            ViewBag.Kategorie = new SelectList(
+                _context.Kategorie,
+                "KategoriaId",
+                "Nazwa",
+                ksiazka.KategoriaId
+            );
+
+            ViewBag.KsiazkaId = ksiazka.KsiazkaId;
+
+            return View(vm);
         }
 
         // EDIT POST
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Ksiazka ksiazka)
+        public async Task<IActionResult> Edit(int id, KsiazkaCreateViewModel vm)
         {
-            if (id != ksiazka.KsiazkaId)
+            var ksiazka = await _context.Ksiazki
+                .Include(k => k.KsiazkaAutorzy)
+                .FirstOrDefaultAsync(k => k.KsiazkaId == id);
+
+            if (ksiazka == null)
                 return NotFound();
 
             if (ModelState.IsValid)
             {
-                _context.Update(ksiazka);
+                ksiazka.Tytul = vm.Tytul;
+                ksiazka.ISBN = vm.ISBN;
+                ksiazka.RokWydania = vm.RokWydania;
+                ksiazka.Wydawnictwo = vm.Wydawnictwo;
+                ksiazka.KategoriaId = vm.KategoriaId;
+
+                // USUNIĘCIE STAREGO AUTORA
+                _context.KsiazkaAutorzy.RemoveRange(
+                    ksiazka.KsiazkaAutorzy);
+
+                // DODANIE NOWEGO
+                _context.KsiazkaAutorzy.Add(new KsiazkaAutor
+                {
+                    KsiazkaId = ksiazka.KsiazkaId,
+                    AutorId = vm.AutorId
+                });
+
                 await _context.SaveChangesAsync();
 
                 return RedirectToAction(nameof(Index));
             }
 
-            ViewBag.Kategorie = new SelectList(_context.Kategorie, "KategoriaId", "Nazwa", ksiazka.KategoriaId);
+            vm.Autorzy = new MultiSelectList(
+                _context.Autorzy.ToList(),
+                "AutorId",
+                "Nazwisko"
+            );
 
-            return View(ksiazka);
+            ViewBag.Kategorie = new SelectList(
+                _context.Kategorie,
+                "KategoriaId",
+                "Nazwa",
+                vm.KategoriaId
+            );
+
+            return View(vm);
         }
 
         // DELETE GET
@@ -230,6 +300,18 @@ namespace SystemBiblioteczny.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> Egzemplarze(int id)
+        {
+            var ksiazka = await _context.Ksiazki
+                .Include(k => k.Egzemplarze)
+                .FirstOrDefaultAsync(k => k.KsiazkaId == id);
+
+            if (ksiazka == null)
+                return NotFound();
+
+            return View(ksiazka);
         }
     }
 }
