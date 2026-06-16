@@ -1,0 +1,143 @@
+﻿@model SystemBiblioteczny.Models.ViewModels.KsiazkaIndexViewModel
+
+<h1>Książki</h1>
+
+<p>
+    <a asp-action="Create"
+       class="btn btn-primary">
+        Dodaj książkę
+    </a>
+</p>
+
+<form method="get" class="row g-3 mb-4">
+
+    <div class="col-md-3">
+        <input type="text"
+               name="szukajTytul"
+               value="@Model.SzukajTytul"
+               class="form-control"
+               placeholder="Szukaj po tytule" />
+    </div>
+
+    <div class="col-md-2">
+        <input type="text"
+               name="szukajISBN"
+               value="@Model.SzukajISBN"
+               class="form-control"
+               placeholder="ISBN" />
+    </div>
+
+    <div class="col-md-2">
+        <input type="text"
+               name="szukajAutor"
+               value="@Model.SzukajAutor"
+               class="form-control"
+               placeholder="Autor" />
+    </div>
+
+    <div class="col-md-3">
+
+        <select name="kategoriaId"
+                class="form-select">
+
+            <option value="">
+                Wszystkie kategorie
+            </option>
+
+            @foreach (var kat in Model.Kategorie)
+            {
+                <option value="@kat.KategoriaId">
+
+                    @kat.Nazwa
+
+                </option>
+            }
+
+        </select>
+
+    </div>
+
+    <div class="col-md-2">
+        <button type="submit"
+                class="btn btn-success w-100">
+            Szukaj
+        </button>
+    </div>
+
+</form>
+
+<table class="table table-striped">
+
+    <thead>
+        <tr>
+            <th>Tytuł</th>
+            <th>Autorzy</th>
+            <th>Kategoria</th>
+            <th>ISBN</th>
+            <th></th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var item in Model.Ksiazki)
+        {
+            <tr>
+
+                <td>
+                    @item.Tytul
+                </td>
+
+                <td>
+
+                    @foreach (var autor in item.KsiazkaAutorzy)
+                    {
+                        <div>
+                            @autor.Autor.Imie @autor.Autor.Nazwisko
+                        </div>
+                    }
+
+                </td>
+
+                <td>
+                    @item.Kategoria?.Nazwa
+                </td>
+
+                <td>
+                    @item.ISBN
+                </td>
+
+                <td>
+
+                    <a asp-action="Details"
+                       asp-route-id="@item.KsiazkaId"
+                       class="btn btn-info btn-sm">
+                        Szczegóły
+                    </a>
+
+                    <a asp-action="Egzemplarze"
+                           asp-route-id="@item.KsiazkaId"
+                           class="btn btn-secondary btn-sm">
+                        Egzemplarze
+                    </a>
+
+                    <a asp-action="Edit"
+                       asp-route-id="@item.KsiazkaId"
+                       class="btn btn-warning btn-sm">
+                        Edytuj
+                    </a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@item.KsiazkaId"
+                       class="btn btn-danger btn-sm">
+                        Usuń
+                    </a>
+
+                </td>
+
+            </tr>
+        }
+
+    </tbody>
+
+</table>

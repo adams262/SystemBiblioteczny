@@ -1,0 +1,32 @@
+﻿@model IEnumerable<SystemBiblioteczny.Models.Autor>
+
+<h1>Autorzy</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">
+        Dodaj autora
+    </a>
+</p>
+
+<table class="table table-striped">
+
+    <thead>
+        <tr>
+            <th>Imię</th>
+            <th>Nazwisko</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Imie</td>
+                <td>@item.Nazwisko</td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>

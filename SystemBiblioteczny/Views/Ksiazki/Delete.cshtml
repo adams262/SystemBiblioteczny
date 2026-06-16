@@ -1,0 +1,33 @@
+﻿@model SystemBiblioteczny.Models.Ksiazka
+
+<h1>Usuń książkę</h1>
+
+<div class="alert alert-danger">
+    Czy na pewno chcesz usunąć tę książkę?
+</div>
+
+<div class="card">
+    <div class="card-body">
+
+        <h3>@Model.Tytul</h3>
+
+        <p>ISBN: @Model.ISBN</p>
+
+    </div>
+</div>
+
+<form asp-action="Delete">
+
+    <input type="hidden" asp-for="KsiazkaId" />
+
+    <button type="submit"
+            class="btn btn-danger">
+        Usuń
+    </button>
+
+    <a asp-action="Index"
+       class="btn btn-secondary">
+        Anuluj
+    </a>
+
+</form>

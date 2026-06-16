@@ -1,0 +1,64 @@
+﻿@model SystemBiblioteczny.Models.ViewModels.KsiazkaCreateViewModel
+
+<h1>Dodaj książkę</h1>
+
+<form asp-action="Create">
+
+    <div class="mb-3">
+        <label asp-for="Tytul"></label>
+        <input asp-for="Tytul" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ISBN"></label>
+        <input asp-for="ISBN" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="RokWydania"></label>
+        <input asp-for="RokWydania" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Wydawnictwo"></label>
+        <input asp-for="Wydawnictwo" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="LiczbaEgzemplarzy"></label>
+
+        <input asp-for="LiczbaEgzemplarzy"
+               class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Kategoria</label>
+
+        <select asp-for="KategoriaId"
+                asp-items="ViewBag.Kategorie"
+                class="form-select">
+            <option value="">-- wybierz kategorię --</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+
+        <label>Autorzy</label>
+
+        <select asp-for="AutorId"
+                asp-items="Model.Autorzy"
+                class="form-select">
+
+            <option value="">
+                -- wybierz autora --
+            </option>
+
+        </select>
+
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Zapisz
+    </button>
+
+</form>
