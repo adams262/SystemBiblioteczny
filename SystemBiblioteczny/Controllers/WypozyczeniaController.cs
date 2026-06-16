@@ -80,8 +80,8 @@ namespace SystemBiblioteczny.Controllers
 
             TempData["Sukces"] = "Książka została wypożyczona!";
 
-            // Po wypożyczeniu przekierowujemy czytelnika od razu do jego panelu
-            return RedirectToAction(nameof(MojeWypozyczenia));
+            
+            return RedirectToAction("Index", "Ksiazki");
         }
 
         // =====================
@@ -121,6 +121,15 @@ namespace SystemBiblioteczny.Controllers
             }
 
             await _context.SaveChangesAsync();
+            string adresPowrotny = Request.Headers["Referer"].ToString();
+
+            
+            if (!string.IsNullOrEmpty(adresPowrotny))
+            {
+                return Redirect(adresPowrotny);
+            }
+
+            
             return RedirectToAction(nameof(Index));
         }
 
@@ -170,13 +179,22 @@ namespace SystemBiblioteczny.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            // Pobieramy wypożyczenia zalogowanego użytkownika wraz z danymi o książce
+            var dzis = DateOnly.FromDateTime(DateTime.Today);
+
+            // Pobieramy wypożyczenia
             var mojeWypozyczenia = await _context.Wypozyczenia
                 .Include(w => w.Egzemplarz)
                     .ThenInclude(e => e.Ksiazka)
                 .Where(w => w.UzytkownikId == uzytkownikId)
                 .OrderByDescending(w => w.DataWypozyczenia)
                 .ToListAsync();
+
+            // Obliczamy dług dla każdego aktywnego wypożyczenia po terminie
+            foreach (var w in mojeWypozyczenia.Where(x => x.Status == StatusWypozyczenia.Aktywne && x.PlanowanyZwrot < dzis))
+            {
+                int dniSpoznienia = dzis.DayNumber - w.PlanowanyZwrot.DayNumber;
+                
+            }
 
             return View(mojeWypozyczenia);
         }

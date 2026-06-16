@@ -2,6 +2,20 @@
 
 <h1>Książki</h1>
 
+@if (TempData["Blad"] != null)
+{
+    <div class="alert alert-danger mt-3">
+        @TempData["Blad"]
+    </div>
+}
+
+@if (TempData["Sukces"] != null)
+{
+    <div class="alert alert-success mt-3">
+        @TempData["Sukces"]
+    </div>
+}
+
 @* Tylko Bibliotekarz może dodawać nowe książki *@
 @if (User.IsInRole("Bibliotekarz"))
 {

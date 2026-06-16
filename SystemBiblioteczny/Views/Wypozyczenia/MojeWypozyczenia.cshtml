@@ -11,6 +11,21 @@
     <div class="alert alert-danger">@TempData["Blad"]</div>
 }
 
+@* 1. OBLICZENIE SUMY DŁUGU DLA CAŁEGO KOTA *@
+@{
+    var dzis = DateOnly.FromDateTime(DateTime.Today);
+    var sumaDlugu = Model
+        .Where(w => w.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne && w.PlanowanyZwrot < dzis)
+        .Sum(w => (dzis.DayNumber - w.PlanowanyZwrot.DayNumber) * 2m);
+}
+
+@if (sumaDlugu > 0)
+{
+    <div class="alert alert-warning">
+        <strong>Uwaga!</strong> Twój aktualny łączny dług za przetrzymane książki wynosi: <strong>@sumaDlugu.ToString("C")</strong>
+    </div>
+}
+
 @if (!Model.Any())
 {
     <div class="alert alert-info">Aktualnie nie masz wypożyczonych żadnych książek.</div>
@@ -23,6 +38,7 @@ else
                 <th>Tytuł książki</th>
                 <th>Data wypożyczenia</th>
                 <th>Termin zwrotu</th>
+                <th>Kara </th> 
                 <th>Status</th>
                 <th>Przedłużenia</th>
                 <th>Akcje</th>
@@ -31,10 +47,27 @@ else
         <tbody>
             @foreach (var item in Model)
             {
+                @* Logika dla pojedynczej książki *@
+                var dniSpoznienia = (item.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne && item.PlanowanyZwrot < dzis)
+                                    ? (dzis.DayNumber - item.PlanowanyZwrot.DayNumber)
+                                    : 0;
+                var aktualnaKara = dniSpoznienia * 2m;
+
                 <tr>
                     <td><strong>@item.Egzemplarz.Ksiazka.Tytul</strong></td>
                     <td>@item.DataWypozyczenia.ToString("dd.MM.yyyy")</td>
                     <td>@item.PlanowanyZwrot.ToString("dd.MM.yyyy")</td>
+                    <td>
+                        @if (dniSpoznienia > 0)
+                        {
+                            <span class="text-danger fw-bold">@aktualnaKara.ToString("C")</span>
+                            <small class="d-block text-muted">(@dniSpoznienia dni po terminie)</small>
+                        }
+                        else
+                        {
+                            <span class="text-success">0,00 zł</span>
+                        }
+                    </td>
                     <td>
                         @if (item.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne)
                         {
@@ -51,16 +84,11 @@ else
                     </td>
                     <td>@item.LiczbaPrzedluzen / 2</td>
                     <td>
-                        @* Czytelnik może sam przedłużyć książkę, jeśli jest aktywna i limit nie minął *@
                         @if (item.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne && item.LiczbaPrzedluzen < 2)
                         {
                             <a asp-action="Przedluz" asp-route-id="@item.WypozyczanieId" class="btn btn-outline-warning btn-sm">
-                                Przedłuż o 14 dni
+                                Przedłuż
                             </a>
-                        }
-                        else if (item.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne)
-                        {
-                            <span class="text-muted small">Brak możliwości przedłużenia</span>
                         }
                     </td>
                 </tr>

@@ -1,7 +1,30 @@
 ﻿@model SystemBiblioteczny.Models.Uzytkownik
 
+@{
+    var dzis = DateOnly.FromDateTime(DateTime.Today);
+
+    // Obliczamy dług "w locie" za aktywne wypożyczenia po terminie
+    var dlugWLocie = Model.Wypozyczenia
+        .Where(w => w.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne && w.PlanowanyZwrot < dzis)
+        .Sum(w => (dzis.DayNumber - w.PlanowanyZwrot.DayNumber) * 2m);
+
+    // Suma kar zarejestrowanych w bazie
+    var dlugZarejestrowany = Model.Kary.Where(k => k.DataZaplaty == null).Sum(k => k.Kwota);
+
+    var sumaCalkowita = dlugWLocie + dlugZarejestrowany;
+}
+
 <h1>Profil Czytelnika: @Model.Imie @Model.Nazwisko</h1>
 <p class="text-muted">E-mail: @Model.Email | Konto od: @Model.DataRejestracji.ToString("dd.MM.yyyy")</p>
+
+@* Zmieniony alert: pokazuje teraz sumę całkowitą (zarejestrowane + w locie) *@
+<div class="alert @(sumaCalkowita > 0 ? "alert-warning" : "alert-success")">
+    <h4>Łączny stan należności: @sumaCalkowita.ToString("C")</h4>
+    @if (dlugWLocie > 0)
+    {
+        <small class="d-block">* W tym @dlugWLocie.ToString("C") za obecnie przetrzymywane książki.</small>
+    }
+</div>
 
 <hr />
 
@@ -10,7 +33,7 @@
     {
         <div class="col-12 mb-4">
             <div class="alert alert-danger">
-                <h5><i class="bi bi-exclamation-triangle-fill"></i> Uwaga! Czytelnik ma nieopłacone kary:</h5>
+                <h5><i class="bi bi-exclamation-triangle-fill"></i> Zarejestrowane kary (oczekujące na zapłatę):</h5>
                 <ul>
                     @foreach (var kara in Model.Kary.Where(k => k.DataZaplaty == null))
                     {
@@ -36,19 +59,22 @@
                         <th>Tytuł książki</th>
                         <th>Data wypożyczenia</th>
                         <th>Termin zwrotu</th>
-                        <th>Data faktycznego zwrotu</th>
                         <th>Status</th>
+                        <th>Naliczone opłaty</th>
                         <th>Akcje personelu</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var w in Model.Wypozyczenia.OrderByDescending(w => w.DataWypozyczenia))
                     {
-                        <tr class="@(w.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne && w.PlanowanyZwrot < DateOnly.FromDateTime(DateTime.Today) ? "table-danger" : "")">
+                        var dniZwloki = (w.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne && w.PlanowanyZwrot < dzis)
+                                        ? (dzis.DayNumber - w.PlanowanyZwrot.DayNumber) : 0;
+                        var karaZaKsiazke = dniZwloki * 2m;
+
+                        <tr class="@(dniZwloki > 0 ? "table-danger" : "")">
                             <td><strong>@w.Egzemplarz.Ksiazka.Tytul</strong></td>
                             <td>@w.DataWypozyczenia.ToString("dd.MM.yyyy")</td>
                             <td>@w.PlanowanyZwrot.ToString("dd.MM.yyyy")</td>
-                            <td>@(w.DataZwrotu.HasValue ? w.DataZwrotu.Value.ToString("dd.MM.yyyy") : "—")</td>
                             <td>
                                 @if (w.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne)
                                 {
@@ -60,16 +86,22 @@
                                 }
                             </td>
                             <td>
-                                @if (w.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne)
+                                @if (dniZwloki > 0)
                                 {
-                                    @* Wywołujemy istniejący mechanizm zwrotu bezpośrednio z tego panelu! *@
-                                    <a asp-controller="Wypozyczenia" asp-action="Zwroc" asp-route-id="@w.WypozyczanieId" class="btn btn-success btn-sm">
-                                        Odbierz zwrot
-                                    </a>
+                                    <span class="text-danger fw-bold">@karaZaKsiazke.ToString("C")</span>
+                                    <br /><small class="text-muted">(@dniZwloki dni po terminie)</small>
                                 }
                                 else
                                 {
-                                    <span class="text-muted small">Brak akcji</span>
+                                    <span>-</span>
+                                }
+                            </td>
+                            <td>
+                                @if (w.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne)
+                                {
+                                    <a asp-controller="Wypozyczenia" asp-action="Zwroc" asp-route-id="@w.WypozyczanieId" class="btn btn-success btn-sm">
+                                        Odbierz zwrot
+                                    </a>
                                 }
                             </td>
                         </tr>
