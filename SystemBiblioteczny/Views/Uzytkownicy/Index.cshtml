@@ -1,0 +1,36 @@
+﻿@model IEnumerable<SystemBiblioteczny.Models.Uzytkownik>
+
+<h1>Zarejestrowani Czytelnicy</h1>
+
+<table class="table table-striped align-middle">
+    <thead>
+        <tr>
+            <th>Imię i Nazwisko</th>
+            <th>Adres E-mail</th>
+            <th>Data rejestracji</th>
+            <th>Aktualnie wypożyczone</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td><strong>@item.Imie @item.Nazwisko</strong></td>
+                <td>@item.Email</td>
+                <td>@item.DataRejestracji.ToString("dd.MM.yyyy")</td>
+                <td>
+                    @* Liczymy ile ma aktywnych wypożyczeń *@
+                    <span class="badge bg-info text-dark">
+                        @item.Wypozyczenia.Count(w => w.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne) szt.
+                    </span>
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@item.UzytkownikId" class="btn btn-primary btn-sm">
+                        Zobacz wypożyczenia
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

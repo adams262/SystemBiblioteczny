@@ -6,9 +6,9 @@ public class Uzytkownik
     public string Imie { get; set; } = null!;
     public string Nazwisko { get; set; } = null!;
     public string Email { get; set; } = null!;
-    public string PasswordHash { get; set; } = null!;
+    public string PasswordHash { get; set; } = string.Empty;
     public string? NumerKarty { get; set; }
-    public DateOnly DataRejestracji { get; set; } = DateOnly.FromDateTime(DateTime.Today);
+    public DateTime DataRejestracji { get; set; } = DateTime.Now;
     public bool CzyAktywny { get; set; } = true;
 
     public ICollection<Wypozyczenie> Wypozyczenia { get; set; } = [];

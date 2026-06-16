@@ -1,0 +1,72 @@
+@model SystemBiblioteczny.Models.ViewModels.RejestracjaBibliotekarzeViewModel
+@{
+    ViewData["Title"] = "Rejestracja bibliotekarza";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white text-center py-3">
+                    <h4 class="mb-0"><i class="bi bi-person-badge"></i> Rejestracja bibliotekarza</h4>
+                    <small class="text-muted">Wymagany kod dostępu</small>
+                </div>
+                <div class="card-body p-4">
+                    <form asp-action="RejestracjaBibliotekarza" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Imie" class="form-label"></label>
+                                <input asp-for="Imie" class="form-control" placeholder="Anna" />
+                                <span asp-validation-for="Imie" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Nazwisko" class="form-label"></label>
+                                <input asp-for="Nazwisko" class="form-control" placeholder="Nowak" />
+                                <span asp-validation-for="Nazwisko" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" placeholder="bibliotekarz@email.pl" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Haslo" class="form-label"></label>
+                            <input asp-for="Haslo" class="form-control" placeholder="min. 6 znaków" />
+                            <span asp-validation-for="Haslo" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="PotwierdzHaslo" class="form-label"></label>
+                            <input asp-for="PotwierdzHaslo" class="form-control" placeholder="powtórz hasło" />
+                            <span asp-validation-for="PotwierdzHaslo" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="KodDostepu" class="form-label"></label>
+                            <input asp-for="KodDostepu" class="form-control" placeholder="kod otrzymany od administratora" />
+                            <span asp-validation-for="KodDostepu" class="text-danger"></span>
+                            <div class="form-text">Kod dostępu jest wymagany do rejestracji konta bibliotekarza.</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100">
+                            Utwórz konto bibliotekarza
+                        </button>
+                    </form>
+                </div>
+                <div class="card-footer text-center py-3">
+                    Masz już konto? <a asp-action="Login">Zaloguj się</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

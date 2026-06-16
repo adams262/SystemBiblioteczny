@@ -1,0 +1,59 @@
+@model SystemBiblioteczny.Models.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Logowanie";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white text-center py-3">
+                    <h4 class="mb-0"><i class="bi bi-book"></i> System Biblioteczny</h4>
+                    <small>Logowanie</small>
+                </div>
+                <div class="card-body p-4">
+
+                    @if (TempData["Sukces"] != null)
+                    {
+                        <div class="alert alert-success">@TempData["Sukces"]</div>
+                    }
+
+                    <form asp-action="Login" asp-route-returnUrl="@ViewBag.ReturnUrl" method="post">
+                        @Html.AntiForgeryToken()
+
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label"></label>
+                            <input asp-for="Email" class="form-control" placeholder="adres@email.pl" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Haslo" class="form-label"></label>
+                            <input asp-for="Haslo" class="form-control" placeholder="••••••••" />
+                            <span asp-validation-for="Haslo" class="text-danger"></span>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary w-100 mt-2">
+                            Zaloguj się
+                        </button>
+                    </form>
+                </div>
+                <div class="card-footer text-center py-3">
+                    <span class="text-muted">Nie masz konta?</span>
+                    <a asp-action="RejestracjaCzytelnika" class="ms-1">Zarejestruj się jako czytelnik</a>
+                    <br />
+                    <a asp-action="RejestracjaBibliotekarza" class="text-secondary small">
+                        Rejestracja dla bibliotekarzy
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

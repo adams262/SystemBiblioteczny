@@ -1,0 +1,55 @@
+﻿@model IEnumerable<SystemBiblioteczny.Models.Wypozyczenie>
+
+<h2>Wypożyczenia</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Książka</th>
+            <th>Czytelnik</th>
+            <th>Data wypożyczenia</th>
+            <th>Termin zwrotu</th>
+            <th>Status</th>
+            <th>Akcje</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Egzemplarz.Ksiazka.Tytul</td>
+
+                <td>
+                    @item.Uzytkownik.Imie
+                    @item.Uzytkownik.Nazwisko
+                </td>
+
+                <td>@item.DataWypozyczenia.ToShortDateString()</td>
+
+                <td>@item.PlanowanyZwrot.ToShortDateString()</td>
+
+                <td>@item.Status</td>
+
+                <td>
+
+                    @if (item.Status == StatusWypozyczenia.Aktywne)
+                    {
+                        <a asp-action="Zwroc"
+                           asp-route-id="@item.WypozyczanieId"
+                           class="btn btn-success">
+                            Zwrot
+                        </a>
+
+                        <a asp-action="Przedluz"
+                           asp-route-id="@item.WypozyczanieId"
+                           class="btn btn-warning">
+                            Przedłuż
+                        </a>
+                    }
+
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

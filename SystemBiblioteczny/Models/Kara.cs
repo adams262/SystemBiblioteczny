@@ -3,10 +3,14 @@ namespace SystemBiblioteczny.Models;
 public class Kara
 {
     public int KaraId { get; set; }
+
+    public bool CzyOplacona { get; set; } = false;
     public decimal Kwota { get; set; }
     public DateOnly DataNalozenia { get; set; } = DateOnly.FromDateTime(DateTime.Today);
     public DateOnly? DataZaplaty { get; set; }
     public string? Powod { get; set; }
+
+
 
     public int WypozyczanieId { get; set; }
     public Wypozyczenie Wypozyczenie { get; set; } = null!;

@@ -14,6 +14,7 @@
         <tr>
             <th>Imię</th>
             <th>Nazwisko</th>
+            <th style="width: 150px;">Akcje</th> 
         </tr>
     </thead>
 
@@ -22,8 +23,14 @@
         @foreach (var item in Model)
         {
             <tr>
-                <td>@item.Imie</td>
-                <td>@item.Nazwisko</td>
+                <td class="align-middle">@item.Imie</td>
+                <td class="align-middle">@item.Nazwisko</td>
+                <td>
+                   
+                    <a asp-action="Delete" asp-route-id="@item.AutorId" class="btn btn-danger btn-sm">
+                        Usuń
+                    </a>
+                </td>
             </tr>
         }
 

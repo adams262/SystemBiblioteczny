@@ -1,0 +1,16 @@
+﻿@model SystemBiblioteczny.Models.Kategoria
+
+<h1>Usuń kategorię</h1>
+<h3 class="text-danger">Czy na pewno chcesz usunąć tę kategorię?</h3>
+
+<div class="card my-4">
+    <div class="card-body">
+        <h5>@Model.Nazwa</h5>
+    </div>
+</div>
+
+<form asp-action="Delete">
+    <input type="hidden" asp-for="KategoriaId" />
+    <button type="submit" class="btn btn-danger">Usuń trwale</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Anuluj</a>
+</form>

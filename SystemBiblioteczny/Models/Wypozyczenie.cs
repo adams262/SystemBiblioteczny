@@ -15,6 +15,8 @@ public class Wypozyczenie
     public DateOnly? DataZwrotu { get; set; }
     public StatusWypozyczenia Status { get; set; } = StatusWypozyczenia.Aktywne;
 
+    public int LiczbaPrzedluzen { get; set; } = 0;
+
     public int EgzemplarzId { get; set; }
     public Egzemplarz Egzemplarz { get; set; } = null!;
 

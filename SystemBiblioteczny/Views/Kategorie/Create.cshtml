@@ -1,0 +1,18 @@
+﻿@model SystemBiblioteczny.Models.Kategoria
+
+<h1>Dodaj kategorię</h1>
+
+<form asp-action="Create">
+
+    <div class="mb-3">
+        <label asp-for="Nazwa" class="form-label">Nazwa kategorii</label>
+        <input asp-for="Nazwa" class="form-control" />
+        <span asp-validation-for="Nazwa" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Zapisz
+    </button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Powrót do listy</a>
+
+</form>

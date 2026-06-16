@@ -1,0 +1,32 @@
+﻿@model IEnumerable<SystemBiblioteczny.Models.Kategoria>
+
+<h1>Kategorie</h1>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">
+        Dodaj kategorię
+    </a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Nazwa kategorii</th>
+            <th style="width: 150px;">Akcje</th> @* Nowa kolumna nagłówka *@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td class="align-middle">@item.Nazwa</td>
+                <td>
+                    @* Przycisk usuwania przekazujący ID konkretnej kategorii *@
+                    <a asp-action="Delete" asp-route-id="@item.KategoriaId" class="btn btn-danger btn-sm">
+                        Usuń
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SystemBiblioteczny.Data;
 
@@ -11,9 +12,11 @@ using SystemBiblioteczny.Data;
 namespace SystemBiblioteczny.Migrations
 {
     [DbContext(typeof(BibliotekaDbContext))]
-    partial class BibliotekaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260616135751_AktualizacjaBazy")]
+    partial class AktualizacjaBazy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -148,9 +151,6 @@ namespace SystemBiblioteczny.Migrations
 
                     b.Property<int?>("BibliotekarzeId")
                         .HasColumnType("int");
-
-                    b.Property<bool>("CzyOplacona")
-                        .HasColumnType("bit");
 
                     b.Property<DateOnly>("DataNalozenia")
                         .HasColumnType("date");
@@ -394,9 +394,6 @@ namespace SystemBiblioteczny.Migrations
                         .HasColumnType("date");
 
                     b.Property<int>("EgzemplarzId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("LiczbaPrzedluzen")
                         .HasColumnType("int");
 
                     b.Property<DateOnly>("PlanowanyZwrot")

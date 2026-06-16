@@ -1,0 +1,22 @@
+﻿@model SystemBiblioteczny.Models.Autor
+
+<h1>Usuń autora</h1>
+<h3 class="text-danger">Czy na pewno chcesz usunąć tego autora?</h3>
+
+<div class="card my-4">
+    <div class="card-body">
+        <h5>@Model.Imie @Model.Nazwisko</h5>
+        @if (!string.IsNullOrEmpty(Model.Bio))
+        {
+            <p class="text-muted mb-0">@Model.Bio</p>
+        }
+    </div>
+</div>
+
+<form asp-action="Delete">
+    @* Ukryte pole przesyłające ID do kontrolera *@
+    <input type="hidden" asp-for="AutorId" />
+
+    <button type="submit" class="btn btn-danger">Usuń trwale</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Anuluj</a>
+</form>

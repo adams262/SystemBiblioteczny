@@ -1,0 +1,85 @@
+﻿@model SystemBiblioteczny.Models.Uzytkownik
+
+<h1>Profil Czytelnika: @Model.Imie @Model.Nazwisko</h1>
+<p class="text-muted">E-mail: @Model.Email | Konto od: @Model.DataRejestracji.ToString("dd.MM.yyyy")</p>
+
+<hr />
+
+<div class="row">
+    @if (Model.Kary.Any(k => k.DataZaplaty == null))
+    {
+        <div class="col-12 mb-4">
+            <div class="alert alert-danger">
+                <h5><i class="bi bi-exclamation-triangle-fill"></i> Uwaga! Czytelnik ma nieopłacone kary:</h5>
+                <ul>
+                    @foreach (var kara in Model.Kary.Where(k => k.DataZaplaty == null))
+                    {
+                        <li>@kara.Kwota.ToString("C") — @kara.Powod</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    }
+
+    <div class="col-12">
+        <h3>Historia i aktualne wypożyczenia</h3>
+
+        @if (!Model.Wypozyczenia.Any())
+        {
+            <div class="alert alert-info">Ten czytelnik nie wypożyczył jeszcze żadnej książki.</div>
+        }
+        else
+        {
+            <table class="table table-bordered">
+                <thead class="table-light">
+                    <tr>
+                        <th>Tytuł książki</th>
+                        <th>Data wypożyczenia</th>
+                        <th>Termin zwrotu</th>
+                        <th>Data faktycznego zwrotu</th>
+                        <th>Status</th>
+                        <th>Akcje personelu</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var w in Model.Wypozyczenia.OrderByDescending(w => w.DataWypozyczenia))
+                    {
+                        <tr class="@(w.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne && w.PlanowanyZwrot < DateOnly.FromDateTime(DateTime.Today) ? "table-danger" : "")">
+                            <td><strong>@w.Egzemplarz.Ksiazka.Tytul</strong></td>
+                            <td>@w.DataWypozyczenia.ToString("dd.MM.yyyy")</td>
+                            <td>@w.PlanowanyZwrot.ToString("dd.MM.yyyy")</td>
+                            <td>@(w.DataZwrotu.HasValue ? w.DataZwrotu.Value.ToString("dd.MM.yyyy") : "—")</td>
+                            <td>
+                                @if (w.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne)
+                                {
+                                    <span class="badge bg-primary">Wypożyczona</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">Zwrócona</span>
+                                }
+                            </td>
+                            <td>
+                                @if (w.Status == SystemBiblioteczny.Models.StatusWypozyczenia.Aktywne)
+                                {
+                                    @* Wywołujemy istniejący mechanizm zwrotu bezpośrednio z tego panelu! *@
+                                    <a asp-controller="Wypozyczenia" asp-action="Zwroc" asp-route-id="@w.WypozyczanieId" class="btn btn-success btn-sm">
+                                        Odbierz zwrot
+                                    </a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">Brak akcji</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+
+<p class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Powrót do listy czytelników</a>
+</p>
