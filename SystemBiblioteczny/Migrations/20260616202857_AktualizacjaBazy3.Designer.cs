@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SystemBiblioteczny.Data;
 
@@ -11,9 +12,11 @@ using SystemBiblioteczny.Data;
 namespace SystemBiblioteczny.Migrations
 {
     [DbContext(typeof(BibliotekaDbContext))]
-    partial class BibliotekaDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260616202857_AktualizacjaBazy3")]
+    partial class AktualizacjaBazy3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

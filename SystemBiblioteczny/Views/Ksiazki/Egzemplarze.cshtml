@@ -34,6 +34,23 @@
 
 </table>
 
+@if (User.IsInRole("Bibliotekarz"))
+{
+    <form asp-action="DodajEgzemplarz" asp-controller="Ksiazki" asp-route-id="@Model.KsiazkaId" method="post" class="mt-3 mb-3">
+        <button type="submit" class="btn btn-success">
+            Dodaj kolejny egzemplarz
+        </button>
+    </form>
+}
+
+@if (TempData["SukcesEgzemplarz"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @TempData["SukcesEgzemplarz"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
 <a asp-action="Index"
        class="btn btn-secondary">
     Powrót

@@ -36,10 +36,8 @@ namespace SystemBiblioteczny.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Kategoria kategoria)
         {
-            if (!ModelState.IsValid)
-                return View(kategoria);
+            if (!ModelState.IsValid) return View(kategoria);
 
-            // Sprawdzenie, czy kategoria o takiej nazwie już istnieje
             bool istnieje = await _context.Kategorie
                 .AnyAsync(k => k.Nazwa.ToLower() == kategoria.Nazwa.ToLower());
 
@@ -52,7 +50,8 @@ namespace SystemBiblioteczny.Controllers
             _context.Kategorie.Add(kategoria);
             await _context.SaveChangesAsync();
 
-            TempData["Sukces"] = "Kategoria została dodana pomyślnie.";
+            // Używamy unikalnego klucza
+            TempData["SukcesKategoria"] = "Kategoria została dodana pomyślnie.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -78,24 +77,21 @@ namespace SystemBiblioteczny.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var kategoria = await _context.Kategorie.FindAsync(id);
-
             if (kategoria != null)
             {
-                // Bezpieczeństwo: Sprawdzamy, czy do kategorii nie są przypisane jakieś książki
-                // Jeśli usuniesz kategorię, która ma książki, baza danych wyrzuci błąd klucza obcego.
                 bool maKsiazki = await _context.Ksiazki.AnyAsync(k => k.KategoriaId == id);
 
                 if (maKsiazki)
                 {
-                    TempData["Blad"] = "Nie można usunąć tej kategorii, ponieważ są do niej przypisane książki!";
+                    // Używamy unikalnego klucza
+                    TempData["BladKategoria"] = "Nie można usunąć tej kategorii, ponieważ są do niej przypisane książki!";
                     return RedirectToAction(nameof(Index));
                 }
 
                 _context.Kategorie.Remove(kategoria);
                 await _context.SaveChangesAsync();
-                TempData["Sukces"] = "Kategoria została pomyślnie usunięta.";
+                TempData["SukcesKategoria"] = "Kategoria została pomyślnie usunięta.";
             }
-
             return RedirectToAction(nameof(Index));
         }
     }

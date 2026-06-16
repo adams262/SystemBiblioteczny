@@ -20,10 +20,11 @@ namespace SystemBiblioteczny.Controllers
         public async Task<IActionResult> Index(
     string? szukajTytul,
     string? szukajISBN,
-    string? szukajAutor,
+    int? szukanyAutorId,
     int? kategoriaId)
         {
             var query = _context.Ksiazki
+                .Where(k => k.CzyAktywna == true)
                 .Include(k => k.Kategoria)
                 .Include(k => k.KsiazkaAutorzy)
                     .ThenInclude(ka => ka.Autor)
@@ -45,31 +46,34 @@ namespace SystemBiblioteczny.Controllers
             }
 
             // AUTOR
-            if (!string.IsNullOrWhiteSpace(szukajAutor))
+
+
+            if (szukanyAutorId.HasValue)
             {
-                query = query.Where(k =>
-                    k.KsiazkaAutorzy.Any(ka =>
-                        ka.Autor.Nazwisko.Contains(szukajAutor)
-                        ||
-                        ka.Autor.Imie.Contains(szukajAutor)));
+                query = query.Where(k => k.KsiazkaAutorzy.Any(ka => ka.AutorId == szukanyAutorId));
             }
 
-            // KATEGORIA
             if (kategoriaId.HasValue)
             {
-                query = query.Where(k =>
-                    k.KategoriaId == kategoriaId);
+                query = query.Where(k => k.KategoriaId == kategoriaId.Value);
             }
+            // Przygotowanie listy autorów do widoku
+            ViewBag.ListaAutorow = new SelectList(
+                _context.Autorzy.Select(a => new {
+                    Id = a.AutorId,
+                    Nazwa = a.Imie + " " + a.Nazwisko
+                }).ToList(),
+                "Id",
+                "Nazwa"
+            );
 
             var vm = new KsiazkaIndexViewModel
             {
                 Ksiazki = await query.ToListAsync(),
-
                 SzukajTytul = szukajTytul,
                 SzukajISBN = szukajISBN,
-                SzukajAutor = szukajAutor,
+                SzukanyAutorId = szukanyAutorId, 
                 KategoriaId = kategoriaId,
-
                 Kategorie = await _context.Kategorie.ToListAsync()
             };
 
@@ -295,11 +299,37 @@ namespace SystemBiblioteczny.Controllers
 
             if (ksiazka != null)
             {
-                _context.Ksiazki.Remove(ksiazka);
+                
+                ksiazka.CzyAktywna = false;
+
+                
                 await _context.SaveChangesAsync();
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DodajEgzemplarz(int id)
+        {
+            var ksiazka = await _context.Ksiazki.FindAsync(id);
+            if (ksiazka == null) return NotFound();
+
+            var nowyEgzemplarz = new Egzemplarz
+            {
+                KsiazkaId = ksiazka.KsiazkaId,
+                Status = StatusEgzemplarza.Dostepny
+            };
+
+            _context.Egzemplarze.Add(nowyEgzemplarz);
+            ksiazka.LiczbaEgzemplarzy++;
+            await _context.SaveChangesAsync();
+
+            
+            TempData["SukcesEgzemplarz"] = "Pomyślnie dodano nowy egzemplarz do systemu!";
+
+            return RedirectToAction(nameof(Egzemplarze), new { id = ksiazka.KsiazkaId });
         }
 
         public async Task<IActionResult> Egzemplarze(int id)
@@ -314,4 +344,6 @@ namespace SystemBiblioteczny.Controllers
             return View(ksiazka);
         }
     }
+
+
 }

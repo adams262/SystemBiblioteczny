@@ -9,6 +9,8 @@ public class Ksiazka
     public string? Wydawnictwo { get; set; }
     public int LiczbaEgzemplarzy { get; set; } = 1;
 
+    public bool CzyAktywna { get; set; } = true;
+
     public int? KategoriaId { get; set; }
     public Kategoria? Kategoria { get; set; }
 

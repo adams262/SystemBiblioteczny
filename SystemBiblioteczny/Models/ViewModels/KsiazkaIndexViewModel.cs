@@ -10,7 +10,7 @@ namespace SystemBiblioteczny.Models.ViewModels
 
         public string? SzukajISBN { get; set; }
 
-        public string? SzukajAutor { get; set; }
+        public int? SzukanyAutorId { get; set; }
 
         public int? KategoriaId { get; set; }
 

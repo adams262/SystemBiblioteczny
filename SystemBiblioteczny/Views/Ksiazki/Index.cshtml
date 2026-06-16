@@ -32,7 +32,9 @@
         <input type="text" name="szukajISBN" value="@Model.SzukajISBN" class="form-control" placeholder="ISBN" />
     </div>
     <div class="col-md-2">
-        <input type="text" name="szukajAutor" value="@Model.SzukajAutor" class="form-control" placeholder="Autor" />
+        <select name="szukanyAutorId" class="form-select" asp-items="ViewBag.ListaAutorow">
+            <option value="">Wszyscy autorzy</option>
+        </select>
     </div>
     <div class="col-md-3">
         <select name="kategoriaId" class="form-select">

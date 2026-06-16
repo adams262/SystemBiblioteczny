@@ -34,6 +34,15 @@
             </tr>
         }
 
+        @if (TempData["Blad"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Blad"]</div>
+        }
+        @if (TempData["Sukces"] != null)
+        {
+            <div class="alert alert-success">@TempData["Sukces"]</div>
+        }
+
     </tbody>
 
 </table>
