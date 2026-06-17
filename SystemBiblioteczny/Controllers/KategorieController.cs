@@ -6,7 +6,10 @@ using SystemBiblioteczny.Models;
 
 namespace SystemBiblioteczny.Controllers
 {
-    [Authorize(Policy = "TylkoBibliotekarze")] // Dostęp tylko dla zalogowanych bibliotekarzy
+
+    // Dostęp tylko dla bibliotekarzy
+
+    [Authorize(Policy = "TylkoBibliotekarze")] 
     public class KategorieController : Controller
     {
         private readonly BibliotekaDbContext _context;
@@ -16,7 +19,7 @@ namespace SystemBiblioteczny.Controllers
             _context = context;
         }
 
-        // ─── 1. WYŚWIETLANIE (Lista) ──────────────────────────────
+        
         [HttpGet]
         public async Task<IActionResult> Index()
         {
@@ -24,14 +27,14 @@ namespace SystemBiblioteczny.Controllers
             return View(kategorie);
         }
 
-        // ─── 2. DODAWANIE (Formularz - GET) ───────────────────────
+        
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // ─── 3. DODAWANIE (Zapis do bazy - POST) ──────────────────
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Kategoria kategoria)
@@ -50,12 +53,12 @@ namespace SystemBiblioteczny.Controllers
             _context.Kategorie.Add(kategoria);
             await _context.SaveChangesAsync();
 
-            // Używamy unikalnego klucza
+           
             TempData["SukcesKategoria"] = "Kategoria została dodana pomyślnie.";
             return RedirectToAction(nameof(Index));
         }
 
-        // ─── 4. USUWANIE (Potwierdzenie - GET) ────────────────────
+        
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -71,7 +74,7 @@ namespace SystemBiblioteczny.Controllers
             return View(kategoria);
         }
 
-        // ─── 5. USUWANIE (Wykonanie - POST) ───────────────────────
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -83,7 +86,7 @@ namespace SystemBiblioteczny.Controllers
 
                 if (maKsiazki)
                 {
-                    // Używamy unikalnego klucza
+                    
                     TempData["BladKategoria"] = "Nie można usunąć tej kategorii, ponieważ są do niej przypisane książki!";
                     return RedirectToAction(nameof(Index));
                 }

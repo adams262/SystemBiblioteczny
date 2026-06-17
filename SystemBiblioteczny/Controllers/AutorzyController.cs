@@ -17,21 +17,21 @@ namespace SystemBiblioteczny.Controllers
             _context = context;
         }
 
-        // ─── LISTA ───────────────────────────────────────────────
+        
         [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Autorzy.ToListAsync());
         }
 
-        // ─── CREATE (GET) ────────────────────────────────────────
+       
         [HttpGet]
         public IActionResult Create()
         {
             return View();
         }
 
-        // ─── CREATE (POST) ───────────────────────────────────────
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Autor autor)
@@ -46,7 +46,7 @@ namespace SystemBiblioteczny.Controllers
             return View(autor);
         }
 
-        // ─── DELETE (GET) ────────────────────────────────────────
+        
         [HttpGet]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -58,7 +58,7 @@ namespace SystemBiblioteczny.Controllers
             return View(autor);
         }
 
-        // ─── DELETE (POST) ───────────────────────────────────────
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

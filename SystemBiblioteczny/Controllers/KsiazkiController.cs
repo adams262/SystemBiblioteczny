@@ -57,7 +57,7 @@ namespace SystemBiblioteczny.Controllers
             {
                 query = query.Where(k => k.KategoriaId == kategoriaId.Value);
             }
-            // Przygotowanie listy autorów do widoku
+            
             ViewBag.ListaAutorow = new SelectList(
                 _context.Autorzy.Select(a => new {
                     Id = a.AutorId,
@@ -98,7 +98,7 @@ namespace SystemBiblioteczny.Controllers
             return View(ksiazka);
         }
 
-        // CREATE GET
+        
         public IActionResult Create()
         {
             var vm = new KsiazkaCreateViewModel
@@ -119,7 +119,7 @@ namespace SystemBiblioteczny.Controllers
             return View(vm);
         }
 
-        // CREATE POST
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(KsiazkaCreateViewModel vm)
@@ -151,7 +151,7 @@ namespace SystemBiblioteczny.Controllers
 
                 await _context.SaveChangesAsync();
 
-                // RELACJA M:N
+                
                 _context.KsiazkaAutorzy.Add(new KsiazkaAutor
                 {
                     KsiazkaId = ksiazka.KsiazkaId,
@@ -178,7 +178,7 @@ namespace SystemBiblioteczny.Controllers
             return View(vm);
         }
 
-        // EDIT GET
+        
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -222,7 +222,7 @@ namespace SystemBiblioteczny.Controllers
             return View(vm);
         }
 
-        // EDIT POST
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, KsiazkaCreateViewModel vm)
@@ -242,11 +242,11 @@ namespace SystemBiblioteczny.Controllers
                 ksiazka.Wydawnictwo = vm.Wydawnictwo;
                 ksiazka.KategoriaId = vm.KategoriaId;
 
-                // USUNIĘCIE STAREGO AUTORA
+                
                 _context.KsiazkaAutorzy.RemoveRange(
                     ksiazka.KsiazkaAutorzy);
 
-                // DODANIE NOWEGO
+                
                 _context.KsiazkaAutorzy.Add(new KsiazkaAutor
                 {
                     KsiazkaId = ksiazka.KsiazkaId,
@@ -274,7 +274,7 @@ namespace SystemBiblioteczny.Controllers
             return View(vm);
         }
 
-        // DELETE GET
+        
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -290,7 +290,7 @@ namespace SystemBiblioteczny.Controllers
             return View(ksiazka);
         }
 
-        // DELETE POST
+        
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

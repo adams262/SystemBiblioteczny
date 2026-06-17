@@ -20,7 +20,8 @@ namespace SystemBiblioteczny.Controllers
             _context = context;
         }
 
-        // ─── LOGIN ───────────────────────────────────────────────
+        // Login
+        
 
         [HttpGet]
         public IActionResult Login(string? returnUrl = null)
@@ -53,7 +54,7 @@ namespace SystemBiblioteczny.Controllers
                 return RedirectToLocal(returnUrl) ?? RedirectToAction("Index", "Home");
             }
 
-            // Sprawdź czytelnika (Uzytkownik)
+            // Sprawdź czytelnika 
             var uzytkownik = await _context.Uzytkownicy
                 .FirstOrDefaultAsync(u => u.Email == model.Email);
 
@@ -69,7 +70,7 @@ namespace SystemBiblioteczny.Controllers
             return View(model);
         }
 
-        // ─── REGISTER CZYTELNIK ──────────────────────────────────
+        // Rejestracja czytelnika
 
         [HttpGet]
         public IActionResult RejestracjaCzytelnika()
@@ -112,7 +113,7 @@ namespace SystemBiblioteczny.Controllers
             return RedirectToAction(nameof(Login));
         }
 
-        // ─── REGISTER BIBLIOTEKARZ ───────────────────────────────
+        // Rejestracja bibliotekarz
 
         [HttpGet]
         public IActionResult RejestracjaBibliotekarza()
@@ -139,7 +140,7 @@ namespace SystemBiblioteczny.Controllers
                 return View(model);
             }
 
-            // Opcjonalny kod dostępu dla bibliotekarzy
+            
             if (model.KodDostepu != "BIBLIOTEKA2026")
             {
                 ModelState.AddModelError("KodDostepu", "Nieprawidłowy kod dostępu dla bibliotekarzy.");
@@ -162,7 +163,7 @@ namespace SystemBiblioteczny.Controllers
             return RedirectToAction(nameof(Login));
         }
 
-        // ─── LOGOUT ──────────────────────────────────────────────
+        // Wylogowywanie
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -172,14 +173,14 @@ namespace SystemBiblioteczny.Controllers
             return RedirectToAction(nameof(Login));
         }
 
-        // ─── ACCESS DENIED ───────────────────────────────────────
+        
 
         public IActionResult AccessDenied()
         {
             return View();
         }
 
-        // ─── HELPERS ─────────────────────────────────────────────
+        
 
         private async Task SignInUser(string id, string email, string nazwaUzytkownika, string rola)
         {

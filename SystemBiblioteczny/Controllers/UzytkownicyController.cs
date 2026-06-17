@@ -5,7 +5,7 @@ using SystemBiblioteczny.Data;
 
 namespace SystemBiblioteczny.Controllers
 {
-    [Authorize(Policy = "TylkoBibliotekarze")] // Tylko personel ma tu wstęp
+    [Authorize(Policy = "TylkoBibliotekarze")] 
     public class UzytkownicyController : Controller
     {
         private readonly BibliotekaDbContext _context;
@@ -15,10 +15,10 @@ namespace SystemBiblioteczny.Controllers
             _context = context;
         }
 
-        // ─── LISTA CZYTELNIKÓW ─────────────────────────────────
+        
         public async Task<IActionResult> Index()
         {
-            // Pobieramy użytkowników i od razu liczymy ich aktywne wypożyczenia
+            // wypozyczenia czytelnikow
             var czytelnicy = await _context.Uzytkownicy
                 .Include(u => u.Wypozyczenia)
                 .ToListAsync();
@@ -26,17 +26,17 @@ namespace SystemBiblioteczny.Controllers
             return View(czytelnicy);
         }
 
-        // ─── SZCZEGÓŁY CZYTELNIKA I JEGO KSIĄŻKI ────────────────
+        // szczegoly czytelnika i jego ksiazki
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
 
-            // Pobieramy czytelnika wraz z jego wszystkimi wypożyczeniami i tytułami książek
+            
             var czytelnik = await _context.Uzytkownicy
                 .Include(u => u.Wypozyczenia)
                     .ThenInclude(w => w.Egzemplarz)
                         .ThenInclude(e => e.Ksiazka)
-                .Include(u => u.Kary) // Przy okazji pobierzemy jego kary
+                .Include(u => u.Kary) 
                 .FirstOrDefaultAsync(u => u.UzytkownikId == id);
 
             if (czytelnik == null) return NotFound();

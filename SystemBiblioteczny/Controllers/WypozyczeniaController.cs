@@ -16,7 +16,7 @@ namespace SystemBiblioteczny.Controllers
             _context = context;
         }
 
-        // LISTA WSZYSTKICH (Tylko dla Bibliotekarza)
+        
         [Authorize(Policy = "TylkoBibliotekarze")]
         public async Task<IActionResult> Index()
         {
@@ -29,9 +29,7 @@ namespace SystemBiblioteczny.Controllers
             return View(wypozyczenia);
         }
 
-        // =====================
-        // WYPOŻYCZ (Tylko dla Czytelnika)
-        // =====================
+        
         [Authorize(Policy = "TylkoCzytelnicy")]
         public async Task<IActionResult> Wypozycz(int ksiazkaId)
         {
@@ -84,9 +82,7 @@ namespace SystemBiblioteczny.Controllers
             return RedirectToAction("Index", "Ksiazki");
         }
 
-        // =====================
-        // ZWROT (Tylko dla Bibliotekarza)
-        // =====================
+        
         [Authorize(Policy = "TylkoBibliotekarze")]
         public async Task<IActionResult> Zwroc(int id)
         {
@@ -133,9 +129,7 @@ namespace SystemBiblioteczny.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // =====================
-        // PRZEDŁUŻ (Zalogowani)
-        // =====================
+        
         [Authorize(Policy = "Zalogowani")]
         public async Task<IActionResult> Przedluz(int id)
         {
@@ -159,7 +153,7 @@ namespace SystemBiblioteczny.Controllers
             await _context.SaveChangesAsync();
             TempData["Sukces"] = "Termin zwrotu został przedłużony o 14 dni.";
 
-            // POPRAWKA: Przekierowanie w zależności od roli
+            
             if (User.IsInRole("Bibliotekarz"))
             {
                 return RedirectToAction(nameof(Index));
@@ -167,9 +161,7 @@ namespace SystemBiblioteczny.Controllers
             return RedirectToAction(nameof(MojeWypozyczenia));
         }
 
-        // =====================
-        // NOWOŚĆ: PANEL CZYTELNIKA
-        // =====================
+        // panel czytelnika
         [Authorize(Policy = "TylkoCzytelnicy")]
         public async Task<IActionResult> MojeWypozyczenia()
         {
@@ -181,7 +173,7 @@ namespace SystemBiblioteczny.Controllers
 
             var dzis = DateOnly.FromDateTime(DateTime.Today);
 
-            // Pobieramy wypożyczenia
+            
             var mojeWypozyczenia = await _context.Wypozyczenia
                 .Include(w => w.Egzemplarz)
                     .ThenInclude(e => e.Ksiazka)
@@ -189,7 +181,7 @@ namespace SystemBiblioteczny.Controllers
                 .OrderByDescending(w => w.DataWypozyczenia)
                 .ToListAsync();
 
-            // Obliczamy dług dla każdego aktywnego wypożyczenia po terminie
+            
             foreach (var w in mojeWypozyczenia.Where(x => x.Status == StatusWypozyczenia.Aktywne && x.PlanowanyZwrot < dzis))
             {
                 int dniSpoznienia = dzis.DayNumber - w.PlanowanyZwrot.DayNumber;
